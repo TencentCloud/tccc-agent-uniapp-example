@@ -58,7 +58,7 @@ npm i tccc-workstation-sdk
 
 使用自定义基座打包 uni 原生插件（请使用真机运行自定义基座）
 
-	![](https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/uniapp_run_demo.png)
+![](https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/uniapp_run_demo.png)
 
 > ! 什么是自定义调试基座及使用说明,请参见[官方教程](https://uniapp.dcloud.net.cn/tutorial/run/run-app.html#customplayground)
 
