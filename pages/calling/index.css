@@ -1,0 +1,246 @@
+.calling-body{
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: rgba(0, 0, 0, 0.85);
+}
+.handle-btns {
+  position: absolute;
+  bottom: 12vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.bottom-btns {
+  position: absolute;
+  z-index: 3;
+  bottom: 3vh;
+  left: 4vw;
+  width: 94vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.btn-normal {
+  width: 9.5vh;
+  height: 9.5vh;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+.btn-image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.btn-dial-panel-wrapper {
+  position: absolute;
+  top: -11vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.btn-dial-panel-text {
+  color: #b6b6b6;
+  font-size: 12px;
+}
+.btn-dial-panel {
+  width: 5vh;
+  height: 5vh;
+  margin-bottom: 10px;
+}
+.btn-hangup {
+  width: 9.5vh;
+  height: 9.5vh;
+  background: #f75c45;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.btn-close {
+  background: #000;
+}
+
+.loading {
+  position: fixed;
+  top: 28vh;
+  left: 50vw;
+  transform: translate(-50%, 0);
+  display: flex;
+  flex-direction: column;
+}
+.loading-img {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*animation: rotate 2s linear infinite;*/
+}
+.avatar-img {
+  height: 200rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.rotate-img,
+.avatar {
+  width: 280rpx;
+  height: 280rpx;
+}
+.loading-text {
+  width: 100%;
+  height: 44rpx;
+  margin-top: 8rpx;
+  text-align: center;
+  color: #ffffff;
+  opacity: 0.6;
+}
+.calleePhone {
+  margin-top: 40rpx;
+  width: 100vw;
+  height: 66rpx;
+  color: #ffffff;
+  text-align: center;
+  font-size: 48rpx;
+}
+
+.circle-wrapper {
+  position: absolute;
+  top: 128rpx;
+  left: 50%;
+  margin-left: -120rpx;
+  width: 240rpx;
+  height: 24rpx;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.circle {
+  width: 24rpx;
+  height: 24rpx;
+  background: #fff;
+  opacity: 0.6;
+  border-radius: 50%;
+}
+
+.circle:nth-child(1) {
+  animation-delay: 0;
+  animation: 1s warn1 linear infinite;
+}
+.circle:nth-child(2) {
+  animation-delay: 0;
+  animation: 1s warn2 linear infinite;
+}
+.circle:nth-child(3) {
+  animation-delay: 0;
+  animation: 1s warn3 linear infinite;
+}
+
+@keyframes warn1 {
+  0% {
+    opacity: 0.6;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+@keyframes warn2 {
+  0% {
+    opacity: 0.6;
+  }
+  25% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes warn3 {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+
+
+.transfer-wrapper {
+  width: 100%;
+  min-height: 100%;
+  position: absolute;
+  z-index: 10;
+  background: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dial-text {
+  width: 90%;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+  font-size: 8vw;
+  line-height: 8vw;
+  height: 8vw;
+  direction: rtl;
+}
+.dial-panel {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 8vh 0 8vh;
+  width: 78%;
+  align-content: space-between;
+  justify-content: space-between;
+}
+.key-item {
+  width: 20vw;
+  height: 20vw;
+  color: #fff;
+  background: #4b4b4b;
+  border-radius: 50%;
+  font-size: 10vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1vh 0 1vh;
+}
+.key-active {
+  background: #5c5c5c;
+}
+.dial-panel-handles {
+  display: flex;
+  justify-content: center;
+}
+.btn-hide-dial-panel {
+  color: #fff;
+  font-size: 4vw;
+}

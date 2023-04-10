@@ -1,0 +1,24 @@
+.login-body{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+	top: 0px;
+	display: flex;
+	flex-direction: column;
+	background: linear-gradient(186.81deg, #BAE0FF 2.74%, #D6EDFF 11.19%, rgba(255, 255, 255, 0) 34.74%), #FFFFFF;
+}
+.login-nav-bar{
+	width: 100%;
+}
+.login-welcome{
+	margin: 40rpx;
+}
+.login-content{
+	margin: 40rpx;
+	flex-grow: 1;
+}
+.login-bottom{
+	margin: 80rpx;
+	text-align: center;
+}
