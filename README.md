@@ -23,9 +23,11 @@
 ### 步骤2：安装依赖
 
 - 安装npm包依赖
+
 ```
-npm i
+npm i tccc-workstation-sdk
 ```
+
 - 安装uni-ui
 
 用HBuilderX导入[uni-ui](https://ext.dcloud.net.cn/plugin?id=55)
