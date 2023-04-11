@@ -143,7 +143,7 @@
 					strStatus = "被永久拒绝权限"
 				}
 				uni.showModal({
-					content: permisionID +"："+ strStatus,
+					content: "麦克风权限，"+ strStatus,
 					showCancel: false
 				});
 			}

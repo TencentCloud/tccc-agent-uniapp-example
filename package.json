@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/TencentCloud/tccc-agent-uniapp-example#readme",
   "dependencies": {
-    "tccc-workstation-sdk": "^1.0.2"
+    "tccc-workstation-sdk": "^1.0.4"
   }
 }

@@ -145,6 +145,18 @@
 					}
 				});
 				this.tcccSDK.on('onError',(errCode,errMsg) => {
+					if (errCode == TcccErrorCode.ERR_SIP_FORBIDDEN) {
+						uni.showModal({
+							title: "你已在其他地方登录，请重新登陆。",
+							showCancel:false,
+							success:()=>{
+								uni.reLaunch({
+									url:'/pages/sdkLogin/sdkLogin'
+								})
+							}
+						});
+						return;
+					}
 					uni.showToast({
 						icon:"error",
 						title:errMsg,
@@ -180,9 +192,17 @@
 				});
 				this.getTcccSDK().checkLogin((code,message) => {
 					uni.hideLoading();
+					const msg = message;
+					if (code == TcccErrorCode.ERR_SIP_BAD_REQUEST) {
+						msg = "您还未登录，请先登录。";
+					} else if (code == TcccErrorCode.ERR_SIP_FORBIDDEN) {
+						msg = "你已在其他地方登录，请重新登陆。";
+					} else if (code == TcccErrorCode.ERR_SIP_REQUESTTIMEOUT) {
+						msg = "请求超时，请重新登陆。";
+					}
 					if (code != TcccErrorCode.ERR_NONE) {
 						uni.showModal({
-							title:"您还未登录，请先登录。",
+							title: msg,
 							showCancel:false,
 							success:()=>{
 								uni.reLaunch({
