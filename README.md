@@ -25,7 +25,7 @@
 - 安装npm包依赖
 
 ```
-npm i tccc-workstation-sdk
+npm i tccc-sdk-uniapp
 ```
 
 - 安装uni-ui
@@ -76,7 +76,7 @@ npm i tccc-workstation-sdk
 
 | 登录页面 | 号码管理页面 | 拨打页面 | 
 |-----|-----|-----|
-|<img src="https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/Demo_login.jpeg" style="width:200px;height:200px">|<img src="https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/Demo_number.jpeg" style="width:200px;height:200px" >|<img src="https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/Demo_Call.jpeg" style="width:200px;height:200px" >|
+|<img src="https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/Demo_login.jpeg" style="width:130px;height:267px">|<img src="https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/Demo_number.jpeg" style="width:130px;height:267px" >|<img src="https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/Demo_Call.jpeg" style="width:130px;height:267px" >|
 
 
 

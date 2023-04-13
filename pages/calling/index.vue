@@ -61,7 +61,7 @@
 </template>
 
 <script>
-	import {TcccWorkstation,TCCCLoginType,TCCCAudioRoute,TCCCEndReason,TCCCSessionDirection} from "tccc-workstation-sdk";
+	import {TcccWorkstation,TCCCLoginType,TCCCAudioRoute,TCCCEndReason,TCCCSessionDirection} from "tccc-sdk-uniapp";
 	import permision from "@/js_sdk/wa-permission/permission.js"
 	
 	export default {
@@ -142,10 +142,12 @@
 				} else {
 					strStatus = "被永久拒绝权限"
 				}
-				uni.showModal({
-					content: "麦克风权限，"+ strStatus,
-					showCancel: false
-				});
+				if (result != 1) {
+					uni.showModal({
+						content: "麦克风权限，"+ strStatus,
+						showCancel: false
+					});
+				}
 			}
 		},
 		methods: {
@@ -169,9 +171,23 @@
 					})
 				});
 				this.tcccSDK.on('onEnded',(reason,reasonMessage,sessionId) => {
+					var msg = "";
 					if (reason == TCCCEndReason.Error) {
+						msg = "系统异常"+reasonMessage;
+					} else if (reason == TCCCEndReason.Timeout) {
+						msg = "超时挂断";
+					} else if (reason == TCCCEndReason.LocalBye) {
+						msg = "你已挂断";
+					} else if (reason == TCCCEndReason.RemoteBye) {
+						msg = "对方已挂断";
+					} else if (reason == TCCCEndReason.Rejected) {
+						msg = "对方已拒接";
+					} else if (reason == TCCCEndReason.RemoteCancel) {
+						msg = "对方已取消";
+					}
+					if (msg != "") {
 						uni.showToast({
-							title: '系统异常',
+							title: msg,
 							icon:"error"
 						});
 					}
@@ -181,6 +197,24 @@
 				this.tcccSDK.on('onAccepted',(sessionId) => {
 					this.status = 'inProgress';
 					this.calleeRemark = "通话中...";
+				});
+				this.tcccSDK.on('onConnectionLost',(serverType) => {
+					uni.showToast({
+						title: '与云端的连接已经断开',
+						icon:"error"
+					});
+				});
+				this.tcccSDK.on('onTryToReconnect',(serverType) => {
+					uni.showToast({
+						title: '正在尝试重新连接到云端',
+						icon: "none"
+					});
+				});
+				this.tcccSDK.on('onConnectionRecovery',(serverType) => {
+					uni.showToast({
+						title: '与云端的连接已经恢复',
+						icon: 'success'
+					});
 				});
 			},
 			handleOpenTransfer() {

@@ -55,7 +55,7 @@
 </template>
 
 <script>
-	import {TcccWorkstation,TcccErrorCode,TCCCSessionDirection} from "tccc-workstation-sdk";
+	import {TcccWorkstation,TcccErrorCode,TCCCSessionDirection} from "tccc-sdk-uniapp";
 	
 	const storage_key = 'tccc_storage_numberList';
 	export default {
@@ -90,8 +90,18 @@
 			const that = this;
 			this.getTcccSDK().checkLogin((code,message) => {
 				if (code != TcccErrorCode.ERR_NONE) {
+					var msg = message;
+					if (code == TcccErrorCode.ERR_SIP_BAD_REQUEST) {
+						msg = "您还未登录，请先登录。";
+					} else if (code == TcccErrorCode.ERR_SIP_FORBIDDEN) {
+						msg = "你已在其他地方登录，请重新登陆。";
+					} else if (code == TcccErrorCode.ERR_SIP_REQUESTTIMEOUT) {
+						msg = "请求超时，请重新登陆。";
+					} else if (code == TcccErrorCode.ERR_SIP_PAYMENTREQUIRED) {
+						msg = "坐席许可满了，请购买坐席。";
+					}
 					uni.showModal({
-						title:"您还未登录，请先登录。",
+						title: msg,
 						showCancel:false,
 						success:()=>{
 							uni.reLaunch({
@@ -130,13 +140,14 @@
 				this.tcccSDK.off('*');
 				this.tcccSDK.on('onNewSession',(res) => {
 					const sessionDirection = res.sessionDirection;
+					const fromUserId = res.fromUserId;
 					if (sessionDirection == TCCCSessionDirection.CallIn) {
 						// 呼入
 						uni.showModal({
-							title:"您有新的来电，请接听。",
+							title: fromUserId+"来电，请接听。",
 							success:(res)=>{
 								if (res.confirm) {
-									that.handleAnswerCallIn(res.fromUserId);
+									that.handleAnswerCallIn(fromUserId);
 								} else {
 									that.getTcccSDK().terminate();
 								}
@@ -192,13 +203,15 @@
 				});
 				this.getTcccSDK().checkLogin((code,message) => {
 					uni.hideLoading();
-					const msg = message;
+					var msg = message;
 					if (code == TcccErrorCode.ERR_SIP_BAD_REQUEST) {
 						msg = "您还未登录，请先登录。";
 					} else if (code == TcccErrorCode.ERR_SIP_FORBIDDEN) {
 						msg = "你已在其他地方登录，请重新登陆。";
 					} else if (code == TcccErrorCode.ERR_SIP_REQUESTTIMEOUT) {
 						msg = "请求超时，请重新登陆。";
+					} else if (code == TcccErrorCode.ERR_SIP_PAYMENTREQUIRED) {
+						msg = "坐席许可满了，请购买坐席。";
 					}
 					if (code != TcccErrorCode.ERR_NONE) {
 						uni.showModal({

@@ -1,6 +1,8 @@
 
 ## API 概览
+
 ### 创建实例和事件回调
+
 | API | 描述 |
 |-----|-----|
 | sharedInstance | 创建 TCCCWorkstation 实例（单例模式） |
@@ -9,9 +11,10 @@
 | off | 取消 TCCCWorkstation 事件回调 |
 
 #### 创建实例和设置事件回调示例代码
+
 ```js
 // 引入TCCC相关包
-import {TcccWorkstation,TCCCLoginType,TCCCAudioRoute,TCCCEndReason} from "tccc-workstation-sdk";
+import {TcccWorkstation,TCCCLoginType,TCCCAudioRoute,TCCCEndReason} from "tccc-sdk-uniapp";
 // 创建实例和设置事件回调
 const tcccSDK = TCCCWorkstation.sharedInstance();
 // 错误事件回调
@@ -32,6 +35,7 @@ tcccSDK.off('*');
 ```
 
 ### 登录相关接口函数
+
 | API | 描述 |
 |-----|-----|
 | login | SDK 登录 |
@@ -39,6 +43,7 @@ tcccSDK.off('*');
 | logout | SDK 退出登录 |
 
 #### 登录示例代码
+
 ```js
 // 其中sdkAppId、userId、token的获取参考关键概念对应的字段。
 // 坐席登录
@@ -54,7 +59,7 @@ tcccSDK.login({
 		// 登录失败
 	}
 });
-// 检查登录状态
+// 手机应用程序在切换到后台时，操作系统会暂停应用程序的进程以节省资源。我们建议你在onShow的时候做一个登录状态检查
 tcccSDK.checkLogin(code,message) => {
     if (code == TcccErrorCode.ERR_NONE) {
 		// 已登录
@@ -66,6 +71,7 @@ tcccSDK.checkLogin(code,message) => {
 ```
 
 ### 呼叫相关接口函数
+
 | API | 描述 |
 |-----|-----|
 | call | 发起通话 |
@@ -76,6 +82,7 @@ tcccSDK.checkLogin(code,message) => {
 | unmute | 取消静音 |
 
 #### 发起呼叫和结束呼叫示例代码
+
 ```js
 // 134xxxx为呼叫的号码
 tcccSDK.call('134xxxx', (code,message) => {
@@ -98,6 +105,7 @@ tcccSDK.answer((code,message) => {
 ```
 
 ### 音频设备接口函数
+
 | API | 描述 |
 |-----|-----|
 | setAudioCaptureVolume | 设定本地音频的采集音量 |
@@ -114,6 +122,7 @@ tcccSDK.getDeviceManager().setAudioRoute(route);
 ```
 
 ### 调试相关接口
+
 | API | 描述 |
 |-----|-----|
 | getSDKVersion | 获取 SDK 版本信息 |
@@ -121,6 +130,7 @@ tcccSDK.getDeviceManager().setAudioRoute(route);
 | setConsoleEnabled | 启用/禁用控制台日志打印 |
 
 #### 获取SDK版本示例代码
+
 ```js
 // 获取SDK 版本号
 TCCCWorkstation.getSDKVersion();
@@ -128,11 +138,15 @@ TCCCWorkstation.getSDKVersion();
 
 
 ### 错误和警告事件
+
 | API | 描述 |
 |-----|-----|
 | onError | 错误事件回调 |
 | onWarning | 警告事件回调 |
+
+
 #### 处理错误回调事件回调示例代码
+
 ```js
 // 错误事件回调
 tcccSDK.on('onError',(errCode,errMsg) => {
@@ -143,17 +157,36 @@ tcccSDK.on('onWarning',(warningCode,warningMsg) => {
 ```
 
 ### 呼叫相关事件回调
+
+
 | API | 描述 |
 |-----|-----|
 | onNewSession | 新会话事件。包括呼入和呼出 |
 | onEnded | 会话结束事件 |
 | onAudioVolume | 音量大小的反馈回调 |
 | onNetworkQuality | 网络质量的实时统计回调 |
+
+
 #### 处理接听和坐席挂断事件回调示例代码
+
+
 ```js
 // 会话结束事件
 tcccSDK.on("onEnded",(reason,reasonMessage,sessionId) => {
-
+	var msg = reasonMessage;
+	if (reason == TCCCEndReason.Error) {
+		msg = "系统异常"+reasonMessage;
+	} else if (reason == TCCCEndReason.Timeout) {
+		msg = "超时挂断";
+	} else if (reason == TCCCEndReason.LocalBye) {
+		msg = "你已挂断";
+	} else if (reason == TCCCEndReason.RemoteBye) {
+		msg = "对方已挂断";
+	} else if (reason == TCCCEndReason.Rejected) {
+		msg = "对方已拒接";
+	} else if (reason == TCCCEndReason.RemoteCancel) {
+		msg = "对方已取消";
+	}
 });
 // 新会话事件。包括呼入和呼出
 tcccSDK.on('onNewSession',(res) => {
@@ -186,26 +219,26 @@ tcccSDK.on('onAudioVolume',(userId,volume) => {
 
 
 ### 与云端连接情况的事件回调
+
+
 | API | 描述 |
 |-----|-----|
 | onConnectionLost | SDK 与云端的连接已经断开 |
 | onTryToReconnect | SDK 正在尝试重新连接到云端 |
 | onConnectionRecovery | SDK 与云端的连接已经恢复 |
 
+
 #### 与云端连接情况的事件回调示例代码
 
 ```js
-// 与云端的连接已经断开
-tcccSDK.on('onTryToReconnect',(serverType) => {
-
-});
-// 正在尝试重新连接到云端
-tcccSDK.on('onConnectionRecovery',(serverType) => {
-
-});
-// 与云端的连接已经恢复
 tcccSDK.on('onConnectionLost',(serverType) => {
-
+	// 与云端的连接已经断开
+});
+tcccSDK.on('onTryToReconnect',(serverType) => {
+	// 正在尝试重新连接到云端
+});
+tcccSDK.on('onConnectionRecovery',(serverType) => {
+	// 与云端的连接已经恢复
 });
 
 ```
@@ -213,6 +246,7 @@ tcccSDK.on('onConnectionLost',(serverType) => {
 
 
 ## API 错误码
+
 ### 基础错误码
 
 | 符号 | 值 | 含义 |
@@ -241,6 +275,7 @@ tcccSDK.on('onConnectionLost',(serverType) => {
 
 
 ### 音频设备相关错误码
+
 | 符号 | 值 | 含义 |
 |---|---|---|
 |ERR_MIC_START_FAIL|-1302|打开麦克风失败。设备，麦克风的配置程序（驱动程序）异常，禁用后重新启用设备，或者重启机器，或者更新配置程序|
@@ -254,6 +289,7 @@ tcccSDK.on('onConnectionLost',(serverType) => {
 |ERR_UNSUPPORTED_SAMPLERATE|-1306|不支持的音频采样率|
 
 ### 网络相关错误码
+
 | 符号 | 值 | 含义 |
 |---|---|---|
 |ERR_RTC_ENTER_ROOM_FAILED|-3301|进入房间失败，请查看 onError 中的 -3301 对应的 msg 提示确认失败原因|

@@ -15,23 +15,27 @@
 
 ## 关键概念
 
-[](id:SdkAppId)
+
 1. **SdkAppId**：是用户在 [腾讯云呼叫中心控制台](https://console.cloud.tencent.com/ccc) 上创建的应用 ID，称之为 SdkAppId，一个腾讯云账号最多可以创建20个腾讯呼叫中心应用，通常为140开头。
+[](id:SdkAppId)
 
-[](id:UserID)
+
 2. **UserID** ：座席或管理员在腾讯云呼叫中心内配置的账号，通常为邮箱格式，首次创建应用，主账号可前往 [站内信](https://console.cloud.tencent.com/message)（子账号需订阅云呼叫中心产品消息） 查看呼叫中心管理员账号和密码。一个 SDKAppID 下可以配置多个 UserID，如果超出配置数量限制，需到 [座席购买页](https://buy.cloud.tencent.com/ccc_seat) 购买更多座席数量。
+[](id:UserID)
 
-[](id:SecretId)
+
 3. **SecretId 和 SecretKey**：开发者调用云 API 所需凭证，通过 [腾讯云控制台](https://console.cloud.tencent.com/cam/capi) 创建。
+[](id:SecretId)
 
-[](id:token)
+
 4. **token**: 登录票据，需要调用云API接口[**CreateSDKLoginToken**](https://cloud.tencent.com/document/api/679/49227)来获取。正确的做法是将 Token 的计算代码和加密密钥放在您的业务服务器上，然后由 App 按需向您的服务器获取实时算出的 Token。
+[](id:token)
 
 ## 集成 SDK
 
 1. 通过 npm 方式将 TCCC SDK 集成到您 uni-app 项目中。
 ```js
-npm i tccc-workstation-sdk
+npm i tccc-sdk-uniapp
 ```
 
 2. 购买 uni-app SDK 插件
@@ -49,6 +53,7 @@ npm i tccc-workstation-sdk
 		![](https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/ios_qx.png)
 
 	- Android 需要以下权限:
+	
 		```
 		<uses-permission android:name="android.permission.INTERNET" />
 		<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -63,12 +68,14 @@ npm i tccc-workstation-sdk
 
 4. 配置音频后台运行
 
-	手机应用程序在切换到后台时，操作系统会暂停应用程序的进程以节省资源。这意味着应用程序的所有活动都将被停止，包括播放音频。而Android系统中在使用麦克风头的应用，进程优先级比较高，默认不会停止运行，除非统资源太紧张才有可能停止运行。而ios下需要配置audio background mode才可以保证有音频影响的时候程序不会终止。
+	手机应用程序在切换到后台时，操作系统会暂停应用程序的进程以节省资源。这意味着应用程序的所有活动都将被停止，包括播放音频。而ios下需要配置**audio background mode**才可以保证有音频影响的时候程序不会终止。
+
 	![](https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/ios_model.png)
 
 > ! 不配置该权限，通话中切后台的时候会自动中断。
 
 5. 使用自定义基座打包 uni 原生插件（请使用真机运行自定义基座）
+
 	![](https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/uniapp_run_demo.png)
 
 > ! 什么是自定义调试基座及使用说明,请参见[官方教程](https://uniapp.dcloud.net.cn/tutorial/run/run-app.html#customplayground)
@@ -80,7 +87,7 @@ npm i tccc-workstation-sdk
 1. 创建 TCCCWorkstation 实例
 
 ```js
-import {TcccWorkstation,TcccErrorCode} from "tccc-workstation-sdk";
+import {TcccWorkstation,TcccErrorCode} from "tccc-sdk-uniapp";
 const tcccSDK = TcccWorkstation.sharedInstance();
 // 监听错误事件
 tcccSDK.on("onError",(errCode,errMsg) => {
@@ -157,8 +164,8 @@ TCCC 目前版本暂时不支持，未来会支持模拟器。如果需要在模
 
 
 ```js
-import {TcccWorkstation,TcccErrorCode} from "tccc-workstation-sdk";
-
+import {TcccWorkstation,TcccErrorCode} from "tccc-sdk-uniapp";
+// 手机应用程序在切换到后台时，操作系统会暂停应用程序的进程以节省资源。我们建议你在onShow的时候做一个登录状态检查
 onShow() {
 	const tcccSDK = TcccWorkstation.sharedInstance();
 	tcccSDK.checkLogin((code,message) => {
@@ -171,3 +178,7 @@ onShow() {
 }
 ```
 
+## 其他
+
+- [tccc uniapp demo](https://github.com/TencentCloud/tccc-agent-uniapp-example)
+- [API 概览以及示例](https://github.com/TencentCloud/tccc-agent-uniapp-example/api.md)

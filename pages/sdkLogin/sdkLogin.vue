@@ -1,7 +1,7 @@
 <template>
 	<view class="login-body">
 		<uni-nav-bar class="login-nav-bar" title="可视化调试" background-color="transparent" color="#000000" :border="false" fixed />
-		<view class="login-welcome">
+		<view @click="onTitleClick" class="login-welcome">
 			<uni-title type="h2" title="你好，"></uni-title>
 			<uni-title type="h2" title="欢迎来到云呼叫中心"></uni-title>
 		</view>
@@ -29,7 +29,8 @@
 
 <script>
 	import {genTestToken,SDKAPPID,SECRETID,SECRETKEY,USERID} from '@/debug/genTestToken.js'
-	import {TcccWorkstation,TCCCLoginType,TcccErrorCode} from "tccc-workstation-sdk";
+	import {TcccWorkstation,TCCCLoginType,TcccErrorCode} from "tccc-sdk-uniapp";
+	const storage_key_for_SECRET = 'tccc_storage_SECRET_info_x';
 	export default {
 		data() {
 			return {
@@ -48,12 +49,43 @@
 				return this.userFormData.SECRETID.trim() == '' || this.userFormData.SECRETKEY.trim() == '' || this.userFormData.USERID.trim() == '';
 			},
 		},
-		onLoad: () => {
-				
+		onLoad()  {
+			this.getLoginUserInf();
 		},
-		onShow: () => {
+		onShow(){
 		},
 		methods: {
+			getLoginUserInf() {
+				const value = uni.getStorageSync(storage_key_for_SECRET);
+				console.error('+++++++:',value);
+				if (value && value["SECRETID"]) {
+					this.userFormData.SECRETID = value.SECRETID;
+					this.userFormData.SECRETKEY = value.SECRETKEY;
+					this.userFormData.SDKAPPID = value.SDKAPPID;
+					this.userFormData.USERID = value.USERID;
+				}
+			},
+			onTitleClick() {
+				const that = this;
+				this.titleClickCount++;
+				if (that.titleClickCount == 1) {
+					setTimeout(() => {
+						that.titleClickCount = 0;
+					}, 300);
+				} else if (that.titleClickCount == 2) {
+					that.titleClickCount = 0;
+					uni.showModal({
+						content: '是否跳转到调试页面？',
+						success: function (res) {
+							if (res.confirm) {
+								uni.reLaunch({
+									url:'/pages/apiTest/index'
+								});
+							}
+						}
+					});
+				}
+			},
 			getTcccSDK() {
 				if (!this.tcccSDK) {
 					this.tcccSDK = TcccWorkstation.sharedInstance();
@@ -61,6 +93,7 @@
 				return this.tcccSDK;
 			},
 			btnLoginClick() {
+				const that = this;
 				uni.showLoading({
 					title: '获取Token..',
 				});
@@ -87,13 +120,29 @@
 					},(code,message)=>{
 						uni.hideLoading();
 						if (code == TcccErrorCode.ERR_NONE) {
+							uni.setStorageSync(storage_key_for_SECRET,{
+								SECRETID: that.userFormData.SECRETID,
+								SECRETKEY: that.userFormData.SECRETKEY,
+								SDKAPPID: that.userFormData.SDKAPPID,
+								USERID :that.userFormData.USERID,
+							});
 							uni.reLaunch({
 								url:'/pages/numberList/index'
 							});
 						} else {
+							var msg = message;
+							if (code == TcccErrorCode.ERR_SIP_BAD_REQUEST) {
+								msg = "您还未登录，请先登录。";
+							} else if (code == TcccErrorCode.ERR_SIP_FORBIDDEN) {
+								msg = "你已在其他地方登录，请重新登陆。";
+							} else if (code == TcccErrorCode.ERR_SIP_REQUESTTIMEOUT) {
+								msg = "请求超时，请重新登陆。";
+							} else if (code == TcccErrorCode.ERR_SIP_PAYMENTREQUIRED) {
+								msg = "坐席许可满了，请购买坐席。";
+							}
 							uni.showToast({
 								icon:'error',
-								title:'登录失败'
+								title: msg
 							});
 						}
 					});
