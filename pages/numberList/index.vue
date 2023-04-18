@@ -1,33 +1,35 @@
 <template>
-	<view class="number-body">
-		<uni-nav-bar left-icon="left" fixed @clickLeft="backClick" class="number-nav-bar" title="发起外呼" background-color="transparent" color="#000000" :border="false" fixed />
-		<view class="number-content">
-			<uni-swipe-action ref="swipeAction" v-if="isShowNumberList">
-				<uni-swipe-action-item
-					v-for="(item, index) in numberList"
-					:right-options="swipeOptions"
-					:key="item.id"
-					@click="swipeClick($event, item)"
-				>
-					<view class="item-content-box">
-						<view class="item-content-left">
-							<uni-title type="h3" class="item-content-number" color="#000000" :title="item.number"></uni-title>
-							<uni-title type="h5" class="item-content-note" color="#757575" :title="getNumberItemNote(item)"></uni-title>
+	<view>
+		<view class="number-body">
+			<uni-nav-bar left-icon="left" fixed @clickLeft="tapLogoutTccc" class="number-nav-bar" title="发起外呼" background-color="transparent" color="#000000" :border="false" fixed />
+			<view class="number-content">
+				<uni-swipe-action ref="swipeAction" v-if="isShowNumberList">
+					<uni-swipe-action-item
+						v-for="(item, index) in numberList"
+						:right-options="swipeOptions"
+						:key="item.id"
+						@click="swipeClick($event, item)"
+					>
+						<view class="item-content-box">
+							<view class="item-content-left">
+								<uni-title type="h3" class="item-content-number" color="#000000" :title="item.number"></uni-title>
+								<uni-title type="h5" class="item-content-note" color="#757575" :title="getNumberItemNote(item)"></uni-title>
+							</view>
+							<view class="item-content-right">
+								<uni-icons type="phone" @click="navigateToCall(item)"  size="30"></uni-icons>
+							</view>
 						</view>
-						<view class="item-content-right">
-							<uni-icons type="phone" @click="navigateToCall(item)"  size="30"></uni-icons>
-						</view>
-					</view>
-				</uni-swipe-action-item>
-			</uni-swipe-action>
-			
-			<view class="number-empty-body" @click="btnEmptyClick" v-else>
-				<view class="empty-image"></view>
-				<text>暂无外呼号码，快去添加吧</text>
+					</uni-swipe-action-item>
+				</uni-swipe-action>
+				
+				<view class="number-empty-body" @click="btnEmptyClick" v-else>
+					<view class="empty-image"></view>
+					<text>暂无外呼号码，快去添加吧</text>
+				</view>
 			</view>
-		</view>
-		<view class="number-bottom">
-			<button type="primary" @click="showSaveNumberView">+ 添加外呼号码</button>
+			<view class="number-bottom">
+				<button type="primary" @click="showSaveNumberView">+ 添加外呼号码</button>
+			</view>
 		</view>
 		<uni-popup ref="popup" :is-mask-click="false" background-color="#fff">
 			<view class="popup-content">
@@ -35,7 +37,7 @@
 					<template v-slot:right>
 					<uni-icons @click="closePopup" type="closeempty" size="20"></uni-icons>
 					</template>
-			    </uni-nav-bar>
+				</uni-nav-bar>
 				<view class="popup-body">
 					<uni-forms :modelValue="formData" :label-width="100">
 						<uni-forms-item label="外呼号码" name="number">
@@ -50,6 +52,9 @@
 					</view>
 				</view>
 			</view>
+		</uni-popup>
+		<uni-popup ref="newCallInPopup" type="dialog">
+			<uni-popup-dialog mode="base" :title="getCallInMessage" :before-close="true" cancelText="拒绝" confirmText="接听" @close="tapTerminate" @confirm="tapAnswer"></uni-popup-dialog>
 		</uni-popup>
 	</view>
 </template>
@@ -74,6 +79,9 @@
 					},
 				],
 				numberList:[],
+				// 呼入的手机号
+				callInNumber: '',
+				callInMap: {},
 				isEditorForm: false,
 				tcccSDK: null,
 				formData: {
@@ -87,7 +95,7 @@
 			this._getStorageNumberList();
 		},
 		onShow() {
-			const that = this;
+			this.getTcccSDK().off('*');
 			this.getTcccSDK().checkLogin((code,message) => {
 				if (code != TcccErrorCode.ERR_NONE) {
 					var msg = message;
@@ -110,7 +118,7 @@
 						}
 					});
 				} else {
-					that.handleTcccEvent.call(that);
+					this.handleTcccEvent();
 				}
 			});
 		},
@@ -125,7 +133,10 @@
 				if (this.isEditorForm)
 					return "修改外呼号码";
 				return "添加外呼号码";
-			}
+			},
+			getCallInMessage() {
+				return `${this.callInNumber}来电，请接听。`;
+			},
 		},
 		methods: {
 			getTcccSDK() {
@@ -135,50 +146,37 @@
 				return this.tcccSDK;
 			},
 			handleTcccEvent() {
-				var that = this;
-				console.info('handle tccc event onNewSession');
-				this.tcccSDK.off('*');
-				this.tcccSDK.on('onNewSession',(res) => {
+				// 主要处理呼入事件。
+				console.info('handle tccc event');
+				this.getTcccSDK().on('onNewSession',(res) => {
 					const sessionDirection = res.sessionDirection;
-					const fromUserId = res.fromUserId;
 					if (sessionDirection == TCCCSessionDirection.CallIn) {
-						// 呼入
-						uni.showModal({
-							title: fromUserId+"来电，请接听。",
-							success:(res)=>{
-								if (res.confirm) {
-									that.handleAnswerCallIn(fromUserId);
-								} else {
-									that.getTcccSDK().terminate();
-								}
-							}
-						});
+						this.handleOnCallIn(res);
 					}
 				});
-				this.tcccSDK.on('onError',(errCode,errMsg) => {
-					if (errCode == TcccErrorCode.ERR_SIP_FORBIDDEN) {
-						uni.showModal({
-							title: "你已在其他地方登录，请重新登陆。",
-							showCancel:false,
-							success:()=>{
-								uni.reLaunch({
-									url:'/pages/sdkLogin/sdkLogin'
-								})
-							}
-						});
-						return;
-					}
-					uni.showToast({
-						icon:"error",
-						title:errMsg,
-					});
+				this.getTcccSDK().on('onEnded',(reason,reasonMessage,sessionId) => {
+					this.handleOnCallEnd(reason,reasonMessage,sessionId);
+				});
+				this.getTcccSDK().on('onError',(errCode,errMsg) => {
+					this.handleOnError(errCode,errMsg);
 				});
 			},
-			handleAnswerCallIn(fromNumber) {
+			handleOnCallIn(res) {
+				const fromUserId = res.fromUserId;
+				this.callInNumber = fromUserId;
+				this.callInMap[res.sessionId] = res;
+				this.$refs.newCallInPopup.open();
+				// 来听播放音乐提醒
+				this.getTcccSDK().startPlayMusic("https://tccc.qcloud.com/assets/newUser.001a041a.wav", 9999);
+			},
+			tapAnswer() {
+				this.callInNumber = '';
+				this.getTcccSDK().stopPlayMusic();
+				this.$refs.newCallInPopup.close();
 				this.getTcccSDK().answer((code,message) => {
 					if (code == TcccErrorCode.ERR_NONE) {
 						uni.reLaunch({
-							url:`/pages/calling/index?number=${fromNumber}&sessionDirection=${TCCCSessionDirection.CallIn}`
+							url:`/pages/calling/index?number=${this.callInNumber}&sessionDirection=${TCCCSessionDirection.CallIn}`
 						});
 					} else {
 						uni.showToast({
@@ -186,6 +184,59 @@
 							icon:"error"
 						});
 					}
+				});
+			},
+			tapTerminate() {
+				this.callInNumber = '';
+				this.getTcccSDK().stopPlayMusic();
+				this.getTcccSDK().terminate();
+				this.$refs.newCallInPopup.close();
+			},
+			handleOnCallEnd(reason,reasonMessage,sessionId) {
+				this.callInNumber = '';
+				if (this.callInMap[sessionId]) {
+					// 停止播放呼入音乐
+					this.getTcccSDK().stopPlayMusic();
+					this.$refs.newCallInPopup.close();
+					this.callInNumber = '';
+					var msg = "";
+					if (reason == TCCCEndReason.Timeout) {
+						msg = "超时挂断";
+					} else if (reason == TCCCEndReason.LocalBye) {
+						msg = "你已挂断";
+					} else if (reason == TCCCEndReason.RemoteBye) {
+						msg = "对方已挂断";
+					} else if (reason == TCCCEndReason.Rejected) {
+						msg = "对方已拒接";
+					} else if (reason == TCCCEndReason.RemoteCancel) {
+						msg = "对方已取消";
+					}
+					if (msg != "") {
+						uni.showToast({
+							title: msg,
+							icon:"error"
+						});
+					}
+				} else {
+					// 呼叫结束不在这里处理
+				}
+			},
+			handleOnError(errCode,errMsg) {
+				if (errCode == TcccErrorCode.ERR_SIP_FORBIDDEN) {
+					uni.showModal({
+						title: "你已在其他地方登录，请重新登陆。",
+						showCancel:false,
+						success:()=>{
+							uni.reLaunch({
+								url:'/pages/sdkLogin/sdkLogin'
+							})
+						}
+					});
+					return;
+				}
+				uni.showToast({
+					icon:"error",
+					title:errMsg,
 				});
 			},
 			getNumberItemNote(item) {
@@ -266,7 +317,7 @@
 				];
 				this.numberList = value;
 			},
-			backClick() {
+			tapLogoutTccc() {
 				uni.showModal({
 					title: '提示',
 					content: '是否退出',
@@ -274,7 +325,6 @@
 						if (res.confirm) {
 							try{
 								this.getTcccSDK().logout(null);
-								TcccWorkstation.destroyInstance();
 								this.tcccSDK = null;
 							}catch(e){
 								//TODO handle the exception

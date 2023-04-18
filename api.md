@@ -80,6 +80,8 @@ tcccSDK.checkLogin(code,message) => {
 | sendDTMF | 发送 DTMF（双音多频信号）|
 | mute | 静音 |
 | unmute | 取消静音 |
+| startPlayMusic | 开始播放音乐 |
+| stopPlayMusic | 停止播放音乐 |
 
 #### 发起呼叫和结束呼叫示例代码
 
@@ -192,7 +194,7 @@ tcccSDK.on("onEnded",(reason,reasonMessage,sessionId) => {
 tcccSDK.on('onNewSession',(res) => {
     const sessionDirection = res.sessionDirection;
     if (sessionDirection == TCCCSessionDirection.CallIn) {
-        // 呼入
+        // 呼入，因手机切后台的时候是不能收到该事件的。所以这里建议你开通手机接听的能力
     } else if (sessionDirection == TCCCSessionDirection.CallOut){
         // 呼出
     }

@@ -57,7 +57,6 @@
 		methods: {
 			getLoginUserInf() {
 				const value = uni.getStorageSync(storage_key_for_SECRET);
-				console.error('+++++++:',value);
 				if (value && value["SECRETID"]) {
 					this.userFormData.SECRETID = value.SECRETID;
 					this.userFormData.SECRETKEY = value.SECRETKEY;

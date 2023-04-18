@@ -57,6 +57,10 @@
 			</view>
 			
 		</view>
+		
+		<uni-popup ref="popup" type="message">
+			<uni-popup-message type="error" :message="errorEndMsg" :duration="0"></uni-popup-message>
+		</uni-popup>
 	</view>
 </template>
 
@@ -96,6 +100,7 @@
 				calleeRemark: '',
 				tcccSDK: null,
 				status: 'loading',
+				errorEndMsg: '',
 				// 'loading',呼出中...
 				// 'waitingPeer',等待接听中
 				// 'inProgress',通话中
@@ -116,12 +121,15 @@
 				this.displayPhone = number;
 				this.status = 'inProgress';
 				this.calleeRemark = "通话中...";
+				// 获取tcccSDK并且接听事件回调
+				this.handleTcccEvent();
 				return;
 			}
 			if(number) {
 				this.displayPhone = number;
 				this.calleeRemark = "呼出中...";
 				this.status = 'loading';// for test. loading
+				this.handleTcccEvent();
 				this.getTcccSDK().call(number, () => {
 					this.status = 'waitingPeer';
 					this.calleeRemark = "等待接听中...";
@@ -158,22 +166,23 @@
 			getTcccSDK() {
 				if (!this.tcccSDK) {
 					this.tcccSDK = TcccWorkstation.sharedInstance();
-					this.handleTcccEvent();
 				}
 				return this.tcccSDK;
 			},
 			handleTcccEvent() {
-				this.tcccSDK.off('*');
-				this.tcccSDK.on('onError',(errCode,errMsg) => {
+				this.getTcccSDK().off('*');
+				this.getTcccSDK().on('onError',(errCode,errMsg) => {
 					uni.showToast({
 						icon:"error",
 						title:errMsg,
 					})
 				});
-				this.tcccSDK.on('onEnded',(reason,reasonMessage,sessionId) => {
+				this.getTcccSDK().on('onEnded',(reason,reasonMessage,sessionId) => {
 					var msg = "";
 					if (reason == TCCCEndReason.Error) {
-						msg = "系统异常"+reasonMessage;
+						msg = "系统异常，"+reasonMessage;
+						this.errorEndMsg = msg;
+						this.$refs.popup.open();
 					} else if (reason == TCCCEndReason.Timeout) {
 						msg = "超时挂断";
 					} else if (reason == TCCCEndReason.LocalBye) {
@@ -194,27 +203,34 @@
 					this.status = 'finished';
 					this.calleeRemark = "已结束";
 				});
-				this.tcccSDK.on('onAccepted',(sessionId) => {
+				this.getTcccSDK().on('onAccepted',(sessionId) => {
 					this.status = 'inProgress';
 					this.calleeRemark = "通话中...";
 				});
-				this.tcccSDK.on('onConnectionLost',(serverType) => {
+				this.getTcccSDK().on('onConnectionLost',(serverType) => {
 					uni.showToast({
 						title: '与云端的连接已经断开',
 						icon:"error"
 					});
 				});
-				this.tcccSDK.on('onTryToReconnect',(serverType) => {
+				this.getTcccSDK().on('onTryToReconnect',(serverType) => {
 					uni.showToast({
 						title: '正在尝试重新连接到云端',
 						icon: "none"
 					});
 				});
-				this.tcccSDK.on('onConnectionRecovery',(serverType) => {
+				this.getTcccSDK().on('onConnectionRecovery',(serverType) => {
 					uni.showToast({
 						title: '与云端的连接已经恢复',
 						icon: 'success'
 					});
+				});
+				// 当页面还在呼入页面的时候，也需要处理呼入
+				this.getTcccSDK().on('onNewSession',(res) => {
+					const sessionDirection = res.sessionDirection;
+					if (sessionDirection == TCCCSessionDirection.CallIn) {
+						// 自行实现，demo暂时不处理。
+					}
 				});
 			},
 			handleOpenTransfer() {

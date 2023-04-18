@@ -30,8 +30,12 @@
 	margin-bottom: 40rpx;
 }
 .number-bottom{
-	margin: 80rpx;
+	bottom: 80rpx;
+	position: fixed;
 	text-align: center;
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
 }
 
 .popup-body{

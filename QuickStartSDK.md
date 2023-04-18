@@ -182,3 +182,4 @@ onShow() {
 
 - [tccc uniapp demo](https://github.com/TencentCloud/tccc-agent-uniapp-example)
 - [API 概览以及示例](https://github.com/TencentCloud/tccc-agent-uniapp-example/api.md)
+- [API 详情](https://tccc.qcloud.com/assets/doc/Agent/uniapp-api/TcccWorkstation.html)
