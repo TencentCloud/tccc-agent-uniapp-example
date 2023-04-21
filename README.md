@@ -84,3 +84,4 @@ npm i tccc-sdk-uniapp
 
 - [快速集成SDK](QuickStartSDK.md)
 - [API 概览以及示例](api.md)
+- [API 详情](https://tccc.qcloud.com/assets/doc/Agent/uniapp-api/TcccWorkstation.html)

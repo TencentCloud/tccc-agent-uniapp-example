@@ -257,6 +257,8 @@ tcccSDK.on('onConnectionRecovery',(serverType) => {
 |ERR_HTTP_REQUEST_FAILURE|-10001|Http 请求失败，请检查网络连接情况|
 |ERR_HTTP_TOKEN_ERROR|-10002|token登录票据不正确或者已过期|
 |ERR_HTTP_GETSIPINFO_ERROR|-10003|获取坐席配置失败。请联系我们|
+|ERR_NETWORK_CANNOT_RESET|-10004|正在通话中，禁止重置网络操作&发起外呼|
+|ERR_HAD_LOGGEDOUT|-10005|你已经退出登录了，请重新登陆|
 |ERR_UNRIGIST_FAILURE|20001|注销失败|
 |ERR_ANSWER_FAILURE|20002|接听失败，通常是trtc进房失败|
 |ERR_SIPURI_WRONGFORMAT|20003|URI 格式错误。|

@@ -175,7 +175,13 @@
 					uni.showToast({
 						icon:"error",
 						title:errMsg,
-					})
+					});
+				});
+				this.getTcccSDK().on('onWarning',(warningCode,warningMsg) => {
+					uni.showToast({
+						icon: "error",
+						title:warningMsg,
+					});
 				});
 				this.getTcccSDK().on('onEnded',(reason,reasonMessage,sessionId) => {
 					var msg = "";

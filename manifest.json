@@ -2,8 +2,8 @@
     "name" : "tccc-agent-uniapp-example",
     "appid" : "__UNI__DD90371",
     "description" : "",
-    "versionName" : "1.0.1",
-    "versionCode" : "100",
+    "versionName" : "1.04.20",
+    "versionCode" : 10420,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {

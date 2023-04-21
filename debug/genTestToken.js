@@ -56,7 +56,7 @@ function genTestToken(ops, successCallback,failCallback) {
 	data:{
 		secretId: ops.SECRETID? ops.SECRETID:SECRETID,
 		secretKey: ops.SECRETKEY? ops.SECRETKEY:SECRETKEY,
-		isTest: newSDKID == 1400264214,
+		isTest: newSDKID == 1400264214 || newSDKID == 1400651411 || newSDKID == 1400670064?true:false,
 		SdkAppId: newSDKID,
 		SeatUserId: ops.USERID? ops.USERID: USERID,
 	},

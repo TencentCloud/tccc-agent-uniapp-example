@@ -105,11 +105,6 @@
 					uni.showLoading({
 						title: '登录中..',
 					});
-					if (res.sdkAppId == 1400264214) {
-						this.getTcccSDK().callExperimentalAPI("setDebugMode","");
-					} else {
-						this.getTcccSDK().callExperimentalAPI("setReleseMode","");
-					}
 					const type = TCCCLoginType.Agent;
 					this.getTcccSDK().login({
 						type,
