@@ -95,6 +95,8 @@
 			this._getStorageNumberList();
 		},
 		onShow() {
+			const version = this.getTcccSDK().getVersion();
+			console.info('tccc SDK version=',version);
 			this.getTcccSDK().off('*');
 			this.getTcccSDK().checkLogin((code,message) => {
 				if (code != TcccErrorCode.ERR_NONE) {
