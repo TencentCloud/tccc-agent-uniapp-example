@@ -164,6 +164,7 @@ tcccSDK.on('onWarning',(warningCode,warningMsg) => {
 | API | 描述 |
 |-----|-----|
 | onNewSession | 新会话事件。包括呼入和呼出 |
+| onAccepted | 对端接听回调 |
 | onEnded | 会话结束事件 |
 | onAudioVolume | 音量大小的反馈回调 |
 | onNetworkQuality | 网络质量的实时统计回调 |
@@ -198,6 +199,9 @@ tcccSDK.on('onNewSession',(res) => {
     } else if (sessionDirection == TCCCSessionDirection.CallOut){
         // 呼出
     }
+});
+// 对端已接听
+tcccSDK.on('onAccepted',(sessionId) => {
 });
 // 网络质量的实时统计回调
 tcccSDK.on('onNetworkQuality',(localQuality) => {
