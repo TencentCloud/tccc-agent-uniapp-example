@@ -178,10 +178,7 @@
 					});
 				});
 				this.getTcccSDK().on('onWarning',(warningCode,warningMsg) => {
-					uni.showToast({
-						icon: "error",
-						title:warningMsg,
-					});
+					console.warn('tccc onWarning,warningCode=',warningCode,warningMsg);
 				});
 				this.getTcccSDK().on('onEnded',(reason,reasonMessage,sessionId) => {
 					var msg = "";
