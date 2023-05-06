@@ -1,4 +1,4 @@
-# 快速集成腾讯云呼叫中心TCCC Uni-app SDK
+# 快速集成腾讯云呼叫中心TCCC uni-app SDK
 本文主要介绍如何快速地将腾讯云 TCCC uni-app SDK 集成到您的项目中。
 
 ## 开发环境要求
@@ -80,7 +80,7 @@ npm i tccc-sdk-uniapp
 
 > ! 什么是自定义调试基座及使用说明,请参见[官方教程](https://uniapp.dcloud.net.cn/tutorial/run/run-app.html#customplayground)
 
-### 代码实现
+## 代码实现
 
 具体编码实现可参考 [API 概览以及示例](api.md)
 
@@ -119,18 +119,36 @@ tcccSDK.login({
 
 3. 发起呼叫
 
-
 ```js
-// 134xxxx为呼叫的号码
-tcccSDK.call('134xxxx', (code,message) => {
+// 发起呼叫
+tcccSDK.call({
+	to: '134xxxx',			  // 被叫号码（必填）
+	remark: "xxx", 			  // 号码备注，在通话条中会替代号码显示（可选）
+	uui: "xxxx", 				  // 户自定义数据（可选）
+}, (code,message) => {
 	if (code == TcccErrorCode.ERR_NONE) {
 		// 发起成功
 	} else {
 		// 发起失败
 	}
 });
-
 ```
+
+4. 处理对端接听回调
+
+```js
+tcccSDK.on('onAccepted',(sessionId) => {
+    //  对端已接听
+});
+```
+
+5. 主动挂断电话
+
+```js
+// 结束通话
+tcccSDK.terminate();
+```
+
 
 ## 常见问题
 
@@ -157,10 +175,20 @@ TCCC 目前版本暂时不支持，未来会支持模拟器。如果需要在模
 ],
 ```
 
+### ios下手机切后台通话中断
+
+因手机应用程序在切换到后台时，操作系统会暂停应用程序的进程以节省资源。可以在 ios下需要配置**audio background mode**才可以保证有音频影响的时候程序不会终止。
+
+	![](https://tccc.qcloud.com/assets/doc/Agent/uniapp_images/ios_model.png)
+
+### 手机下能不能处理呼入
+
+ 如果手机在前台运行的时候有新会话将会收到**onNewSession**回调，但是我们不建议你在手机上处理呼入（APP在切换到后台时会暂停程序），建议你开通手机接听功能。
+
 
 ### 发起呼叫报 **408或者503错误**
 
-这种情况一般出现在应用程序切后台重新唤醒后，网络状态还未完全恢复。我们强烈建议你在发起呼叫或者是程序onshow的时候调用接口判断是否是已登录。
+这种情况一般出现在应用程序切后台重新唤醒后，网络状态还未完全恢复。我们强烈建议你在发起呼叫或者是程序onShow的时候调用接口判断是否是已登录。
 
 
 ```js

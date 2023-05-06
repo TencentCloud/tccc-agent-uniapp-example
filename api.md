@@ -86,8 +86,12 @@ tcccSDK.checkLogin(code,message) => {
 #### 发起呼叫和结束呼叫示例代码
 
 ```js
-// 134xxxx为呼叫的号码
-tcccSDK.call('134xxxx', (code,message) => {
+// 发起呼叫
+tcccSDK.call({
+	to: '134xxxx',			  // 被叫号码（必填）
+	remark: "xxx", 			  // 号码备注，在通话条中会替代号码显示（可选）
+	uui: "xxxx", 				  // 户自定义数据（可选）
+}, (code,message) => {
 	if (code == TcccErrorCode.ERR_NONE) {
 		// 发起成功
 	} else {

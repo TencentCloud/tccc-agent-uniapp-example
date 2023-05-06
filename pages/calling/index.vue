@@ -130,7 +130,10 @@
 				this.calleeRemark = "呼出中...";
 				this.status = 'loading';// for test. loading
 				this.handleTcccEvent();
-				this.getTcccSDK().call(number, () => {
+				this.getTcccSDK().call({
+						to: number,
+						remark: 'testByUniapp'
+					}, () => {
 					this.status = 'waitingPeer';
 					this.calleeRemark = "等待接听中...";
 				});

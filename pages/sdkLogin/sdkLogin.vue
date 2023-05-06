@@ -57,7 +57,7 @@
 		methods: {
 			getLoginUserInf() {
 				const value = uni.getStorageSync(storage_key_for_SECRET);
-				if (value && value["SECRETID"]) {
+				if (value && value["SECRETID"] && SECRETID == '') {
 					this.userFormData.SECRETID = value.SECRETID;
 					this.userFormData.SECRETKEY = value.SECRETKEY;
 					this.userFormData.SDKAPPID = value.SDKAPPID;
