@@ -313,7 +313,7 @@
 				const value = uni.getStorageSync(storage_key) || [{
 						id: now.getTime(),
 						number: '075536564058',
-						remark: '呼叫中心技术支持',
+						remark: '联络中心技术支持',
 						createTime: now,
 					}
 				];

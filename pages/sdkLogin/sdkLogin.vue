@@ -3,7 +3,7 @@
 		<uni-nav-bar class="login-nav-bar" title="可视化调试" background-color="transparent" color="#000000" :border="false" fixed />
 		<view @click="onTitleClick" class="login-welcome">
 			<uni-title type="h2" title="你好，"></uni-title>
-			<uni-title type="h2" title="欢迎来到云呼叫中心"></uni-title>
+			<uni-title type="h2" title="欢迎来到云联络中心"></uni-title>
 		</view>
 		<view class="login-content">
 			<uni-forms :modelValue="userFormData" :label-width="100">

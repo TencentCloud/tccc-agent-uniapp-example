@@ -66,8 +66,8 @@
         "nativePlugins" : {
             "TcccWorkstationUniPlugin-TcccWorkstationImpl" : {
                 "__plugin_info__" : {
-                    "name" : "腾讯云呼叫中心TCCC SDK",
-                    "description" : "uni-app TCCC SDK 是腾讯云呼叫中心联络解决方案在 uni-app 上的 SDK，提供外呼电话手机、接听客服来电等服务",
+                    "name" : "腾讯云联络中心TCCC SDK",
+                    "description" : "uni-app TCCC SDK 是腾讯云联络中心联络解决方案在 uni-app 上的 SDK，提供外呼电话手机、接听客服来电等服务",
                     "platforms" : "Android,iOS",
                     "url" : "https://ext.dcloud.net.cn/plugin?id=11219",
                     "android_package_name" : "com.tencent.tccc.uniapp.example",
