@@ -1,6 +1,6 @@
 {
   "name": "tccc-agent-uniapp-example",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "tccc uniapp example",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/TencentCloud/tccc-agent-uniapp-example#readme",
   "dependencies": {
-    "tccc-sdk-uniapp": "^1.9.6"
+    "tccc-sdk-uniapp": "^1.12.13"
   }
 }

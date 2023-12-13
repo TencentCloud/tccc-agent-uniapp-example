@@ -186,26 +186,6 @@ TCCC 目前版本暂时不支持，未来会支持模拟器。如果需要在模
  如果手机在前台运行的时候有新会话将会收到**onNewSession**回调，但是我们不建议你在手机上处理呼入（APP在切换到后台时会暂停程序），建议你开通手机接听功能。
 
 
-### 发起呼叫报 **408或者503错误**
-
-这种情况一般出现在应用程序切后台重新唤醒后，网络状态还未完全恢复。我们强烈建议你在发起呼叫或者是程序onShow的时候调用接口判断是否是已登录。
-
-
-```js
-import {TcccWorkstation,TcccErrorCode} from "tccc-sdk-uniapp";
-// 手机应用程序在切换到后台时，操作系统会暂停应用程序的进程以节省资源。我们建议你在onShow的时候做一个登录状态检查
-onShow() {
-	const tcccSDK = TcccWorkstation.sharedInstance();
-	tcccSDK.checkLogin((code,message) => {
-		if (code != TcccErrorCode.ERR_NONE) {
-			// 未登录，或者网络连接异常。请重新登陆。
-		} else {
-			// 已登录
-		}
-	});
-}
-```
-
 ## 其他
 
 - [tccc uniapp demo](https://github.com/TencentCloud/tccc-agent-uniapp-example)

@@ -56,6 +56,7 @@
 		<uni-popup ref="newCallInPopup" type="dialog">
 			<uni-popup-dialog mode="base" :title="getCallInMessage" :before-close="true" cancelText="拒绝" confirmText="接听" @close="tapTerminate" @confirm="tapAnswer"></uni-popup-dialog>
 		</uni-popup>
+		
 	</view>
 </template>
 
@@ -95,13 +96,11 @@
 			this._getStorageNumberList();
 		},
 		onShow() {
-			const version = this.getTcccSDK().getVersion();
-			console.info('tccc SDK version=',version);
 			this.getTcccSDK().off('*');
 			this.getTcccSDK().checkLogin((code,message) => {
 				if (code != TcccErrorCode.ERR_NONE) {
 					var msg = message;
-					if (code == TcccErrorCode.ERR_SIP_BAD_REQUEST) {
+					if (code == TcccErrorCode.ERR_SIP_BAD_REQUEST || TcccErrorCode.ERR_SIP_SERVICE_UNAVAILABLE == code || TcccErrorCode.ERR_HAD_LOGGEDOUT == code) {
 						msg = "您还未登录，请先登录。";
 					} else if (code == TcccErrorCode.ERR_SIP_FORBIDDEN) {
 						msg = "你已在其他地方登录，请重新登陆。";
@@ -251,36 +250,9 @@
 				this.numberList = [];
 			},
 			navigateToCall(item) {
-				uni.showLoading({
-					title:'准备呼叫..',
-				});
-				this.getTcccSDK().checkLogin((code,message) => {
-					uni.hideLoading();
-					var msg = message;
-					if (code == TcccErrorCode.ERR_SIP_BAD_REQUEST) {
-						msg = "您还未登录，请先登录。";
-					} else if (code == TcccErrorCode.ERR_SIP_FORBIDDEN) {
-						msg = "你已在其他地方登录，请重新登陆。";
-					} else if (code == TcccErrorCode.ERR_SIP_REQUESTTIMEOUT) {
-						msg = "请求超时，请重新登陆。";
-					} else if (code == TcccErrorCode.ERR_SIP_PAYMENTREQUIRED) {
-						msg = "坐席许可满了，请购买坐席。";
-					}
-					if (code != TcccErrorCode.ERR_NONE) {
-						uni.showModal({
-							title: msg,
-							showCancel:false,
-							success:()=>{
-								uni.reLaunch({
-									url:'/pages/sdkLogin/sdkLogin'
-								})
-							}
-						});
-					} else {
-						uni.reLaunch({
-							url:`/pages/calling/index?number=${item.number}&remark=${item.remark}&sessionDirection=${TCCCSessionDirection.CallOut}`
-						});
-					}
+				console.info('start call to=',item.number);
+				uni.reLaunch({
+					url:`/pages/calling/index?number=${item.number}&remark=${item.remark}&sessionDirection=${TCCCSessionDirection.CallOut}`
 				});
 			},
 			swipeClick(e,nowItem) {
